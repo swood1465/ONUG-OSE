@@ -1,0 +1,112 @@
+module pathservice {
+  namespace "http://com/example/pathservice";
+  prefix pathservice;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  container pathservice {
+
+    list service {
+      key "name";
+      leaf name {
+        type string;
+      }
+
+      uses ncs:service-data;
+
+      list traffic-class {
+        key "name";
+        leaf name {
+          type string;
+        }
+        leaf dscp {
+          type string;
+        }
+        leaf source-ip {
+          type string;
+        }
+        leaf source-port {
+          type string;
+        }
+        leaf destination-ip {
+          type string;
+        }
+        leaf destination-port {
+          type string;
+        }
+        leaf protocol-type {
+          type string;
+        }
+      }
+      list application {
+        key "name";
+        leaf name {
+          type string;
+        }
+        leaf category-id {
+          type uint32;
+        }
+        leaf application-id {
+          type uint32;
+        }
+      }
+
+      container user {
+        leaf list-name {
+          type string;
+        }
+        leaf-list user-id {
+          type string;
+        }
+        leaf-list group {
+          type string;
+        }
+      }
+      leaf-list site-id {
+        type uint32;
+      }
+      leaf business-priority {
+        type enumeration {
+          enum "high";
+          enum "normal";
+          enum "low";
+        }
+      }
+      container link-selection-mode {
+        leaf mode {
+          type enumeration {
+            enum "automatic";
+            enum "preferred";
+            enum "lowest-cost";
+          }
+        }
+        leaf physical-port {
+          type uint32;
+        }
+        leaf service-type {
+          type enumeration {
+            enum "commodity";
+            enum "wireless";
+            enum "private";
+          }
+        }
+        leaf service-provider {
+          type string;
+        }
+      }
+      leaf path-selection-mode {
+        type enumeration {
+          enum drop;
+          enum underlay;
+          enum overlay;
+        }
+      }
+    }
+  }
+}
