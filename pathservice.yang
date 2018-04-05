@@ -76,6 +76,10 @@ module pathservice {
           enum "high";
           enum "normal";
           enum "low";
+          enum "Voice"
+          enum "Critical_Data"
+          enum "Transactional"
+          enum "user-defined"
         }
       }
       container link-selection-mode {
@@ -109,4 +113,31 @@ module pathservice {
       }
     }
   }
+
+  container create_traffic_sla {
+
+    list sla {
+      key "custom_sla_name"; 
+      leaf custom_sla_name {
+      type string 
+    }
+      leaf delay {
+        type integer
+      }
+
+      leaf jitter {
+        type integer
+      }
+
+      leaf MOS {
+        type integer
+      }
+
+      leaf Result {
+        type integer
+      }
+
+  }
+}
+
 }
