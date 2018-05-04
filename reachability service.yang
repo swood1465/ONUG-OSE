@@ -1,0 +1,246 @@
+module gatewayservices {
+  namespace "http://com/example/gatewayservice";
+  prefix gatewayservices;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  feature ose-option-A {
+    description  
+      "This feature means that ose reachability service option-A is supported by the Serving SDWAN manager";
+    reference
+      "ONUG-OSE-2 SDWAN Reachability and Segmentation Specification";
+    }
+
+   feature ose-option-B {
+    description  
+      "This feature means that ose reachability service option-B is supported by the Serving SDWAN manager";
+    reference
+      "ONUG-OSE-2 SDWAN Reachability and Segmentation Specification";
+    }   
+
+  }
+
+  container ose-gateway-services {
+
+      uses ncs:service-data;
+
+    container query-ose-gateway {
+      description
+        "Query serving SDWAN manager to return all designated OSE gateway elements";
+
+        config false;
+
+        list  {
+          key "OSE-gw-list-name";
+          leaf ose-gw-list-name {
+            type string;
+          }
+
+          uses ncs:service-data;
+
+          leaf gw-ID {
+            type uint32;
+          }
+          leaf gw-name {
+            type string;
+          }
+          leaf ose-interworking-option {
+            type enumeration {
+              enum ose-option-A;
+              enum ose-option-B;
+            }
+
+          }
+          leaf encap-type {
+            type enumeration {
+              enum IPSEC_TUNNEL;
+              enum IPSEC_TRANSPORT;
+              enum GRE;
+            }
+          }
+          leaf auth-type {
+            type enumeration {
+              enum PSK;
+              enum PKI;
+            }
+          }
+          leaf crypto {
+            type enumeration {
+              enum AES-128;
+              enum AES-256;
+              enum AES-256-GCM;
+            }
+
+            description
+              "Crypto algorithm support.  Others to be added";
+          }
+        }
+         
+        }
+
+    container create-ose-gateway {
+    
+        list ose-gateway-list {
+        key "gw-name";
+        leaf gw-name {
+          type string;
+        }
+        leaf ServingMgrID {
+          type ipv4-address;
+        }
+        leaf ServingMgrID {
+          type ipv6-address;
+        }
+        leaf gwID {
+          type uint32;
+        }
+        leaf result {
+          type uint32;
+        }
+    }
+      
+    }
+
+    container create-ose-segment {
+      description
+        "create segments across Nsw interface between OSE gateways";
+        list gateway {
+          key "gw-name";
+          leaf gw-name {
+            type string;
+          }
+          leaf gwID {
+            type uint32;
+          }
+          leaf ServingMgrIP {
+            type ipv4-address;
+          }
+          leaf ServingMgrIP {
+            type ipv6-address;
+          }
+          list segment-list {
+            key "segment-list-name";
+            leaf segment-list-name {
+              type string;
+            }
+            leaf segment-name {
+              type string;
+            }
+            leaf vlan_id {
+              type uint16;
+            }
+            leaf vrf_id {
+              type uint16;
+            }
+            leaf segment-type {
+              type enumeration {
+                enum OVERLAY;
+                enum Nsw;
+              }
+            }
+          }
+        }
+      
+    }
+
+    container ose-peer-connect {
+      description
+        "enable ose interface to peer";
+
+        list peer-list {
+          key "peer-list-name";
+          leaf name {
+            type string;
+          }
+          leaf LocalGWID {
+            type uint32;
+          }
+          leaf PeerGWID {
+            type uint32;
+
+          }
+          leaf peerGWName {
+            type string;
+          }
+          leaf authType {
+            type enumeration {
+                enum PSK;
+                enum PKI;
+              }
+            }
+          leaf CryptoSelect {
+            type enumeration {
+              enum AES-256;
+              enum AES-128;
+              enum AES-256-GCM;
+            }
+
+            description
+              "Crypto algorithm selection.  Others to be added";
+          }
+          leaf ose-interworking-option {
+            type enumeration {
+              enum ose-option-A;
+              enum ose-option-B;
+            }
+
+          }
+
+          }
+
+      }
+
+
+    container ConnectOSESegments {
+      description
+        "Provide information to allow stitching of VPNs between OSE GWs";
+
+        list SegmentList {
+          key "name";
+          leaf gatewayID {
+            type uint32;
+          }
+          list CrossConnects {
+            key "CCname";
+            leaf LocalSegName {
+              type string;
+            }
+            leaf LocalSegID-VLAN {
+              if-feature ose-option-A
+              type uint16;
+            }
+            leaf LocalSegID-VRF {
+              if-feature ose-option-B
+              type uint16
+            }
+            leaf PeerSegName {
+              type string;
+            }
+            leaf PeerSegID-VLAN {
+              if-feature ose-option-A
+              type uint16;
+            }
+            leaf PeerSegID-VRF {
+              if-feature ose-option-B
+              type uint16
+            }
+
+          }
+            
+          }
+
+          }
+      } 
+      
+    }
+
+
+    }
+      
+}
